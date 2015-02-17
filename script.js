@@ -2,9 +2,10 @@ nitemsdim=50;
 width=20;
 space=3;
 numberOpen=0;
-maxOpen=30;
+maxOpen=2500;
 board=new Array(nitemsdim);
 uf=new Array(nitemsdim*nitemsdim+2);
+stopid=0;
 window.onload=function(){init(nitemsdim,width,space)};
 
 function paintCell(cntxt,i,j)
@@ -29,7 +30,7 @@ function merge(x,y)
 	var parentx=uf[x];
 	var parenty=uf[y];
 	var it;
-	for(it=0;it<nitemsdim*nitemsdim;it++)
+	for(it=0;it<nitemsdim*nitemsdim+2;it++)
 	{
 		if (uf[it]==parentx) uf[it]=parenty;
 	}
@@ -79,7 +80,7 @@ function runFunc(cntxt,nitemsdim,width,space)
 	}
 	uf[count]=count;
 	numberOpen=0;
-	setInterval(function(){ performIteration(cntxt); }, 1000);
+	stopid=setInterval(function(){ performIteration(cntxt); }, 2);
 }
 
 function performIteration(cntxt)
@@ -101,6 +102,14 @@ function performIteration(cntxt)
 			found=true;
 		}
 	}
+	if (isPercolating())
+	{
+		cntxt.fillStyle = "#4b7fcd";
+		for(c=1;c<nitemsdim*nitemsdim+1;c++)
+		{
+			if (uf[c]==uf[0])	paintCell(cntxt,Math.round(((c-1)%nitemsdim)+1),Math.round((c-1)/nitemsdim));
+		}
+	}
 }
 
 function paintGrid(cntxt,nitemsdim,width,space)
@@ -119,13 +128,18 @@ function paintGrid(cntxt,nitemsdim,width,space)
 	}
 }
 
+function stop()
+{
+	clearInterval(stopid);
+}
+
 function init(nitemsdim,width,space)
 {
 	var cnvs = document.getElementById("gamecanvas");
 	var cntxt = cnvs.getContext("2d");
 	paintGrid(cntxt,nitemsdim,width,space);
-	//var initButton = document.getElementById("initButton");
-	//initButton.onclick = function(){initFunc(cntxt,nitemsdim,width,space)};
+	var stopButton = document.getElementById("stopButton");
+	stopButton.onclick = function(){stop()};
 	var runButton = document.getElementById("runButton");
 	runButton.onclick = function(){runFunc(cntxt,nitemsdim,width,space)};
 }
