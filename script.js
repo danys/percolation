@@ -20,20 +20,22 @@ function initFunc(cntxt,nitemsdim,width,space)
 	paintGrid(cntxt,nitemsdim,width,space);
 }
 
+function rootNode(x)
+{
+	if (uf[x]==x) return x;
+	return rootNode(uf[x]);
+}
+
 function connected(x,y)
 {
-	return uf[x]==uf[y];
+	return rootNode(x)==rootNode(y);
 }
 
 function merge(x,y)
 {
-	var parentx=uf[x];
-	var parenty=uf[y];
-	var it;
-	for(it=0;it<nitemsdim*nitemsdim+2;it++)
-	{
-		if (uf[it]==parentx) uf[it]=parenty;
-	}
+	var rootNodex = rootNode(x);
+	var rootNodey = rootNode(y);
+	uf[rootNodex] = rootNodey;
 }
 
 function convert2dimto1dim(x,y)
@@ -53,7 +55,7 @@ function connectNeighbors(x,y)
 
 function isPercolating()
 {
-	return uf[0]==uf[nitemsdim*nitemsdim+1];
+	return rootNode(uf[0])==rootNode(uf[nitemsdim*nitemsdim+1]);
 }
 
 function runFunc(cntxt,nitemsdim,width,space)
@@ -83,6 +85,12 @@ function runFunc(cntxt,nitemsdim,width,space)
 	stopid=setInterval(function(){ performIteration(cntxt); }, 2);
 }
 
+function updateDisplayNumberOpen()
+{
+	var p = document.getElementById("numberOpenText");
+	p.innerHTML="Number of open squares: "+numberOpen;
+}
+
 function performIteration(cntxt)
 {
 	//Randomly open some cells
@@ -100,15 +108,14 @@ function performIteration(cntxt)
 			paintCell(cntxt,r1+1,r2+1);
 			numberOpen++;
 			found=true;
+			updateDisplayNumberOpen();
 		}
 	}
 	if (isPercolating())
 	{
 		cntxt.fillStyle = "#4b7fcd";
 		for(c=1;c<nitemsdim*nitemsdim+1;c++)
-		{
-			if (uf[c]==uf[0])	paintCell(cntxt,Math.round((c-1)%nitemsdim)+1,Math.floor((c-1)/nitemsdim)+1);
-		}
+			if (rootNode(uf[c])==rootNode(uf[0]))	paintCell(cntxt,Math.round((c-1)%nitemsdim)+1,Math.floor((c-1)/nitemsdim)+1);
 	}
 }
 
