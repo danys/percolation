@@ -107,7 +107,7 @@ function performIteration(cntxt)
 		cntxt.fillStyle = "#4b7fcd";
 		for(c=1;c<nitemsdim*nitemsdim+1;c++)
 		{
-			if (uf[c]==uf[0])	paintCell(cntxt,Math.round(((c-1)%nitemsdim)+1),Math.round((c-1)/nitemsdim));
+			if (uf[c]==uf[0])	paintCell(cntxt,Math.round((c-1)%nitemsdim)+1,Math.floor((c-1)/nitemsdim)+1);
 		}
 	}
 }
