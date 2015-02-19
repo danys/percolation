@@ -65,9 +65,29 @@ function isPercolating()
 
 function runFunc(cntxt,nitemsdim,width,space)
 {
-	initFunc(cntxt,nitemsdim,width,space);
+	var input = document.getElementById("nColumns");
+	var number=0;
+	if (isNaN(input.value)) number = 50;
+	else
+	{
+		number = parseInt(input.value,10);
+		if (number>1000) number=1000;
+		else if (number<10) number=10;
+	}
+	window['nitemsdim']=number;
+	nitemsdim=number;
+	window['maxOpen']=nitemsdim*nitemsdim;
+	maxOpen=nitemsdim*nitemsdim;
 	board=new Array(nitemsdim);
 	uf=new Array(nitemsdim*nitemsdim+2);
+	nnodes=new Array(nitemsdim*nitemsdim+2);
+	var t = document.getElementById("titleCaption");
+	t.innerHTML="Monte Carlo simulation of a percolation process on a "+nitemsdim+"x"+nitemsdim+" grid";
+	var canvaselement=document.getElementById("gamecanvas");
+	var cwidth=space*(nitemsdim+1)+width*nitemsdim;
+	canvaselement.width=cwidth;
+	canvaselement.height=cwidth;
+	initFunc(cntxt,nitemsdim,width,space);
 	var i,j,count;
 	cntxt.fillStyle = "#000000";
 	count=0;
