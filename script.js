@@ -5,6 +5,7 @@ numberOpen=0;
 maxOpen=2500;
 board=new Array(nitemsdim);
 uf=new Array(nitemsdim*nitemsdim+2);
+nnodes=new Array(nitemsdim*nitemsdim+2);
 stopid=0;
 window.onload=function(){init(nitemsdim,width,space)};
 
@@ -26,16 +27,20 @@ function rootNode(x)
 	return rootNode(uf[x]);
 }
 
-function connected(x,y)
-{
-	return rootNode(x)==rootNode(y);
-}
-
 function merge(x,y)
 {
 	var rootNodex = rootNode(x);
 	var rootNodey = rootNode(y);
-	uf[rootNodex] = rootNodey;
+	if (nnodes[rootNodex]>nnodes[rootNodey])
+	{
+		uf[rootNodey]=rootNodex;
+		nnodes[rootNodex]=nnodes[rootNodex]+nnodes[rootNodey];
+	}
+	else
+	{
+		uf[rootNodex]=rootNodey;
+		nnodes[rootNodey]=nnodes[rootNodey]+nnodes[rootNodex];
+	}
 }
 
 function convert2dimto1dim(x,y)
@@ -67,6 +72,7 @@ function runFunc(cntxt,nitemsdim,width,space)
 	cntxt.fillStyle = "#000000";
 	count=0;
 	uf[0]=0; //stores the top super node
+	nnodes[0]=1;
 	count++;
 	//Paint every cell black
 	for(i=1;i<=nitemsdim;i++)
@@ -77,10 +83,12 @@ function runFunc(cntxt,nitemsdim,width,space)
 			board[i-1][j-1]=1;
 			paintCell(cntxt,i,j);
 			uf[count]=count;
+			nnodes[count]=1;
 			count++;
 		}
 	}
 	uf[count]=count;
+	nnodes[count]=1;
 	numberOpen=0;
 	stopid=setInterval(function(){ performIteration(cntxt); }, 2);
 }
@@ -116,6 +124,7 @@ function performIteration(cntxt)
 		cntxt.fillStyle = "#4b7fcd";
 		for(c=1;c<nitemsdim*nitemsdim+1;c++)
 			if (rootNode(uf[c])==rootNode(uf[0]))	paintCell(cntxt,Math.round((c-1)%nitemsdim)+1,Math.floor((c-1)/nitemsdim)+1);
+		stop();
 	}
 }
 
