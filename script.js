@@ -116,6 +116,7 @@ function performIteration(cntxt)
 		cntxt.fillStyle = "#4b7fcd";
 		for(c=1;c<nitemsdim*nitemsdim+1;c++)
 			if (rootNode(uf[c])==rootNode(uf[0]))	paintCell(cntxt,Math.round((c-1)%nitemsdim)+1,Math.floor((c-1)/nitemsdim)+1);
+		stop();
 	}
 }
 
